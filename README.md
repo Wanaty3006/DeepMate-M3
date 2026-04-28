@@ -360,23 +360,29 @@ document.getElementById('btn-tx').addEventListener('click', function() {
       body: ev.target.result
     })
     .then(function(r) {
-      if (r.status === 401) throw new Error('API Key ไม่ถูกต้อง');
+      if (r.status === 401) throw new Error('API Key ไม่ถูกต้อง — ตรวจสอบใน Step 1');
       if (!r.ok) throw new Error('Upload ล้มเหลว HTTP ' + r.status);
       return r.json();
     })
     .then(function(d) {
-      setMsg('กำลังส่งคำขอถอดเสียง...');
-      return fetch('https://api.assemblyai.com/v2/transcript', {
+      setMsg('กำลังส่งคำขอถอดเสียง (v3)...');
+      return fetch('https://api.assemblyai.com/v3/transcript', {
         method:'POST',
         headers:{ authorization:aai, 'content-type':'application/json' },
-        body: JSON.stringify({ audio_url:d.upload_url, language_code:'th', speech_model:'nano' })
+        body: JSON.stringify({
+          audio_url: d.upload_url,
+          speech_models: ['universal-3-pro', 'universal-2'],
+          language_detection: true
+        })
       });
     })
     .then(function(r) {
-      if (!r.ok) throw new Error('ส่งคำขอถอดเสียงล้มเหลว');
+      if (r.status === 401) throw new Error('API Key ไม่ถูกต้อง — ตรวจสอบใน Step 1');
+      if (!r.ok) return r.text().then(function(t){ throw new Error('ส่งคำขอถอดเสียงล้มเหลว: '+t); });
       return r.json();
     })
     .then(function(d) {
+      if (!d.id) throw new Error('ไม่ได้รับ transcript ID จาก AssemblyAI');
       return pollTx(aai, d.id, 0, setMsg);
     })
     .then(done)
