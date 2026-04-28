@@ -181,6 +181,7 @@ textarea:focus{border-color:rgba(239,159,39,.3)}
         <input type="password" id="ant-key" placeholder="sk-ant-api03-xxxxxxxxxxxx" style="font-family:monospace">
         <div class="hint">รับที่ <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> → API Keys</div>
       </div>
+      <div id="step1-error" class="error-box" style="display:none;margin-top:10px"></div>
       <div class="btn-row">
         <button class="btn btn-primary" onclick="goStep(2)">ถัดไป →</button>
       </div>
@@ -284,10 +285,27 @@ function renderStepBar() {
 
 // ── Navigation ─────────────────────────────────────────────────
 function goStep(n) {
-  // Validate step 1
+  var errBox = document.getElementById('step1-error');
+  if (errBox) errBox.style.display = 'none';
+
   if (n === 2) {
-    if (!document.getElementById('ant-key').value.trim()) { alert('กรุณากรอก Anthropic API Key ครับ'); return; }
-    if (!document.getElementById('aai-key').value.trim()) { alert('กรุณากรอก AssemblyAI API Key ครับ'); return; }
+    var antVal = document.getElementById('ant-key').value.trim();
+    var aaiVal = document.getElementById('aai-key').value.trim();
+    if (!antVal && !aaiVal) {
+      errBox.style.display = 'block';
+      errBox.textContent = '⚠️ กรุณากรอก API Key ทั้ง 2 ช่องครับ';
+      return;
+    }
+    if (!antVal) {
+      errBox.style.display = 'block';
+      errBox.textContent = '⚠️ กรุณากรอก Anthropic API Key ครับ';
+      return;
+    }
+    if (!aaiVal) {
+      errBox.style.display = 'block';
+      errBox.textContent = '⚠️ กรุณากรอก AssemblyAI API Key ครับ';
+      return;
+    }
   }
   if (n === 4 && !document.getElementById('transcript-box').value.trim()) {
     // ok - user will paste
