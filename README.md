@@ -133,12 +133,9 @@ textarea{width:100%;min-height:160px;background:rgba(255,255,255,.03);border:.5p
         </div>
       </div>
       <div class="fl" style="margin-bottom:10px">
-        <div class="krow">
-          <label style="margin:0;font-size:10px;color:var(--t3)">AssemblyAI API Key</label>
-          <button class="ktgl" id="tgl-aai">แสดง</button>
-        </div>
-        <input type="password" id="f-aai" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" style="font-family:monospace;font-size:12px">
-        <div class="hint">รับฟรีที่ <a href="https://www.assemblyai.com" target="_blank">assemblyai.com</a> → Dashboard → API Key</div>
+        <label>Google Apps Script URL (Proxy)</label>
+        <input type="text" id="f-proxy" placeholder="https://script.google.com/macros/s/xxxx/exec">
+        <div class="hint">ดู Step วิธีตั้งค่า Proxy ด้านล่าง</div>
       </div>
       <div class="fl">
         <div class="krow">
@@ -388,7 +385,7 @@ document.getElementById('btn-tx').addEventListener('click', function() {
     .then(done)
     .catch(function(e) { fail(e.message || 'เกิดข้อผิดพลาด'); });
   };
-  reader.readAsArrayBuffer(S.file);
+      reader.readAsArrayBuffer(S.file.file || S.file);
 });
 
 function pollTx(key, id, n, setMsg) {
